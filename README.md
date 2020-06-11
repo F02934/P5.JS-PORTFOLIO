@@ -30,3 +30,14 @@ sketch 4
 <img width="589" alt="Screen Shot 2020-06-11 at 3 35 31 PM" src="https://user-images.githubusercontent.com/56677617/84394637-7ff41680-abfd-11ea-852b-4ce332e59935.png">
 
 In this sketch, balls get out from a black hole. They are dancing around the strange square in the middle because attracted by it. The square is made by giving a random RGBA to every pixel within the square. The background is white, it feels like nothingness. I watched movies and cartoons during my life, sometimes I encountered the scene for a people reach this place all white with nothing, watching it gave made me feel a weird sensation and afraid of such places.
+
+SKETCH 5
+-
+<img width="590" alt="Screen Shot 2020-06-11 at 4 25 52 PM" src="https://user-images.githubusercontent.com/56677617/84398540-5d173180-ac00-11ea-9e18-905c9db249aa.png">
+
+This last sketch, it's about changing the TINT and the filter of the images. Since I usually like editing my photo with a different kind of app, I tried to make one on my own.
+ I included my favourite Filter that includes THRESHOLD, GRAY and DILATE.  I used the images of the frog from the lectures because I think it's best to show the colours of it when changing TINT. The images are taken when I pressed the DILATE button, I really like this filter. I encountered the problem of returning the images or clear it after using filters I tried to make a copy but I will solve it. The 3 slides are used to change the tint R, G and B. I really loved the effect it creates by using TINT with the filter DILATE.
+ 
+ CONCLUSION
+ -
+ It was fun working with the sketches but at the same times hard, also I had to check the p5.js reference everytime and rewatching your lecture on blackboard and on github because I always forgot something. I was thinking of upgrading my sketch to make them better so I will try my best. Thanks Will for your lectures!!
