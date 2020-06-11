@@ -1,0 +1,130 @@
+class Particle {
+  constructor(x, y) {
+    this.pos = createVector(x, y)
+    //how fast they go, if it's negative go backward
+    this.vel = createVector(random(-1, 1), random(-1, 1)) //
+    
+    //how fast they increase velocity or how much
+    this.acc = createVector(0,0)
+
+  }
+  
+  apply(force) {
+    this.acc.add(force)
+  }
+
+  update() {
+    this.vel.add(this.acc) // add acceleration to velocity so it become faster
+    
+    // if we use attraction by distance (dist*o.oo5)
+    //we use this damping formula to restric the growing speed
+    //by multiplying their velocity by number less than 1
+    this.vel.mult(0.99)
+    this.pos.add(this.vel) //add velocity to position so they ,pve
+    this.acc.set(0,0) //Reset acc every update so it doesn acc too much
+    
+   
+  }
+
+  draw() {
+    noStroke()
+    fill(0)
+    ellipse(this.pos.x, this.pos.y, 10, 10)
+  }
+}
+
+let particles = []
+
+let sizeX= 50
+let sizeY  = 50
+
+let bholeX = 200
+let bholeY = 10
+
+
+function setup() {
+  createCanvas(400, 400);
+  pixelDensity(1);
+  for (let i = 0; i < 100; i++) {
+    //create instance
+    particle = new Particle(bholeX, bholeY)
+    
+    //add it to the list, if not the particles doesnt appear
+    particles.push(particle) // you add particle to the array
+  }
+
+}
+
+function draw() {
+  background(220);
+  let att = createVector(width/2,height/2);
+  
+  fill("black")
+  ellipse(bholeX,bholeY,100,10);
+  
+  loadPixels() 
+  rect(att.x,att.y,sizeX,sizeY);
+  
+  for (y = att.y + sizeY; y > att.y - sizeY; y--) {
+    for (x = att.x + sizeX; x > att.x - sizeX; x--) {
+      index = (x + y * width) * 4;
+      pixels[index] = random(255);
+      pixels[index+1] = random(255);
+      pixels[index+2] = random(255);
+      pixels[index+3] = random(255);
+      
+    }
+    updatePixels();
+  }
+  
+   let attractor = createVector(att.x,att.y) //ATTRACTION TO MY MOUSE
+   //let attractor = createVector(
+
+  for (let particle of particles) {
+    
+    //We work out the vector from the particle position to the attractor
+    //we use p5.vec.su because it takes 2 vect and reutrn a new one
+    //attractor is a (2)vector (x,y), also particle is a (1)vector (x,y)
+    //attractor minus the mover(.pos) give us the direction then we normalize
+    let force = p5.Vector.sub(attractor, particle.pos) 
+    
+    //.mag to find the length of vect, before norm alizing
+    //This is equivalent to the distance between the two point.
+    let dist = force.mag()
+    
+    
+    force.normalize() //normalize to know only direction
+    
+    //if we multiply by distance the farther they are, the more attraction have
+    force.mult(dist*0.005) // then multiply by 0.5
+  
+    
+    particle.apply(force)
+    particle.apply(createVector(random(-1,1)), random(-1,1)) // GRAVITY that pulls down(y)
+    
+    //keep all the particle with some distance between thems
+      for (let otherParticle of particles) {
+      if (otherParticle != particle) {
+        let d = p5.Vector.sub(particle.pos, otherParticle.pos)
+        d.normalize()
+        d.mult(0.01)
+        particle.apply(d)
+      }
+    }
+    
+        particle.update()
+        particle.draw()
+      }
+
+
+
+
+    }
+
+//VELOCITY is the RATE of change of our POSITION
+//ACCELERATION is the rate of change of our VELOCIty
+
+//every frame we add acceleration to the velocity and then we add the velocity to the positouib
+
+//TERMINAL velocity so things dont accelerate forever
+
