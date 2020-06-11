@@ -1,0 +1,147 @@
+
+//L SYSTEM
+
+//tree color
+var r = 200
+var g = 200
+var b = 255
+
+
+// change backgrund color
+let slider;
+
+
+
+//axiom: F
+//Rules: F=C0FF-[C1-F+F+F]+[C2+F-F-F]
+var angle;
+var axiom = "F";
+var sentence = axiom;
+
+var len = 100;
+
+ let pressedtime = 0
+
+var rules = [];
+rules[0] = {
+
+  a: "F",
+  b: "FF+[+F-F-F]-[-F+F+F]"
+}
+
+
+
+function generate() {
+ 
+  pressedtime += 1
+  print(pressedtime)
+  len *= 0.55;
+  var nextSentence = "";
+  for (var i = 0; i < sentence.length; i++) {
+    var current = sentence.charAt(i);
+    var found = false;
+    for (var j = 0; j < rules.length; j++) {
+      if (current == rules[j].a) {
+        found = true;
+        nextSentence += rules[j].b;
+        break;
+      }
+    }
+    if (!found) {
+      nextSentence += current;
+    }
+  }
+  sentence = nextSentence;
+ 
+  drawing();
+}
+
+function drawing() {
+  //background(51);
+  resetMatrix();
+  translate(width / 2, height);
+
+
+  for (var i = 0; i < sentence.length; i++) {
+    var current = sentence.charAt(i);
+
+    if (current == "F") {
+      noFill();
+      stroke(r, g, b,40);
+      line(0, 0, 0, -len);
+      translate(0, -len);
+    } else if (current == "+") {
+      rotate(angle);
+    } else if (current == "-") {
+      rotate(-angle);
+    } else if (current == "[") {
+      push();
+
+    } else if (current == "]") {
+      pop();
+    }
+  }
+}
+
+function setup() {
+  createCanvas(400, 400);
+  pixelDensity(1);
+  noiseDetail(5);
+  noFill();
+
+  //Slider
+  slider = createSlider(0, 255, 100);
+  slider.position(450, 10);
+  slider.style("width", "110px");
+  //
+
+ 
+  drawing();
+  angle = radians(30);
+
+  var button = createButton("GROW TREE");
+  button.mousePressed(generate);
+
+
+
+}
+
+
+function draw() {
+  let scale = 0.01
+  let val = slider.value()
+  
+
+
+  background(50,110,val);
+  
+  
+
+  loadPixels();
+
+  for (var x = 0; x < width; x++) {
+    for (var y = 0; y < height; y++) {
+      col = 255 * noise(scale * x, scale * y, 5 * scale * frameCount);
+      var index = (x + y * width) * 4
+      pixels[index] = col;
+
+    }
+  }
+  updatePixels();
+
+
+
+  drawing();
+
+  
+
+  textSize(20)
+  stroke(0)
+  fill("black")
+  text('"WORLD TREE"', -70,-len);
+  
+ 
+
+
+
+}
