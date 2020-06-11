@@ -1,0 +1,203 @@
+var song;
+var button;
+var amp; //amplitude
+
+//---------------
+let scale = 0.01
+
+//---------
+let particles = [];
+let vel = 2;
+
+//
+let sp = 50
+let speed = 2
+
+var volhistory = []
+
+
+
+   
+
+function setup() {
+    createCanvas(400,400); 
+    song = loadSound("cazzo.mp3", loaded); 
+
+  
+    
+  
+    amp = new p5.Amplitude(); //Amplitude object, it's gonna listen to     the volume of all the sound stuffs that's happening in the sketch
+  
+  
+  //--------------------------------------------------
+    pixelDensity(1);
+    noiseDetail(5);
+  //---------------------
+  for(let i =0; i < 50; i++) {
+    let particle = new Particle(random(width), random(height))
+    particles.push(particle)
+  }
+  
+  
+  
+  
+ 
+}
+function loaded(){
+    button = createButton("play");
+    button.mousePressed(togglePlaying);
+  
+}
+
+
+function draw() {
+  
+    
+  
+    var vol = amp.getLevel(); //amp.getlevel you get the volume of it
+  volhistory.push(vol) // get current value of VOL
+  
+  
+    var diam = map(vol, 0,0.5, 5, 100); // in the function toggle      playing, I set the volume to 0.3 (too little), so now i'm mapping the   vol variable into a bigger values so I can see it on the ellipse
+  
+   background(20,random(-diam,diam),diam*25.5);
+    fill("black");
+    ellipse(width/2, sp, diam-20 ,diam-20);
+    if (sp > width || sp < 0) {
+      speed = speed * -1;
+    }
+  sp = sp + speed
+      
+   
+  
+ 
+  
+  
+  
+  //--------------------------------------------
+  
+  loadPixels();
+  
+    for (var x = 0; x < width; x++) {
+    for(var y = 0; y < height; y++) {
+      col = 255 * noise(scale * x, scale * y, 5 * scale * frameCount);
+      var index = (x + y * width) * 4
+      pixels[index] = col;
+      
+    }
+  }
+  updatePixels();
+  
+  //----------------------------------------------
+  let attractor = createVector(width/2, sp) // so it follow the moving elllipse
+  
+  
+  for(let particle of particles) {
+    let force = p5.Vector.sub(attractor, particle.pos)
+   
+    let dist = force.mag()
+   
+    
+    force.normalize()
+   
+   
+    force.mult(dist * 0.05)
+    
+    
+    particle.apply(force)
+   
+ 
+    
+    
+    
+  for (let otherParticle of particles) {
+    if (otherParticle != particle) {
+      let d = p5.Vector.sub(particle.pos, otherParticle.pos)
+      d.normalize()
+      d.mult(0.05)
+      particle.apply(d)
+    }
+  }
+    
+  noStroke()
+  
+  fill(random(100),random(100),random(100));
+  particle.update()
+  particle.draw(diam)
+    
+  
+  }
+     beginShape();
+  for ( var i = 0; i < volhistory.length; i++) {
+    var k = map(volhistory[i], 0, 1, height, 0)
+    noFill()
+    stroke(random(255),random(255),random(255))
+    strokeWeight(1);
+    vertex(i,k);
+
+  }
+  endShape();
+ 
+  
+  if (volhistory.length > width ) {
+    volhistory.splice(0,1);
+  }
+  text("PARTY", 350 ,50);
+  textSize(diam)
+  text("PARTY", 0,50)
+  
+  
+    
+}
+  
+ 
+  
+
+  
+
+
+
+
+
+function togglePlaying() {
+  
+    if (!song.isPlaying()) {
+      song.play();
+      song.setVolume(0.5);
+      button.html("pause");
+    }else {
+      song.stop();
+      button.html("play");
+    }
+  
+  
+}
+
+//---------ARRAY OF BUBBLE
+class Particle {
+  constructor (x,y) {
+    this.pos = createVector(x,y)
+    this.vel = createVector(random(-20, 20), random(-20, 20))
+    this.acc = createVector(0, 10)
+    
+  }
+  
+  apply(force) {
+    this.acc.add(force)
+  }
+  
+ update() {
+    this.vel.add(this.acc)
+    this.vel.mult(0.99)
+    this.pos.add(this.vel)
+    this.acc.set(0, 0)
+  }
+
+   
+ 
+
+   draw(dd) {
+    rect(this.pos.x, this.pos.y, 5 ,dd);
+  }
+
+  }
